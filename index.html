@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Visuals Art — Photo Gallery</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #111;
+      color: #eee;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      min-height: 100vh;
+    }
+
+    /* ── Header ── */
+    header {
+      padding: 2.5rem 2rem 1rem;
+      text-align: center;
+      border-bottom: 1px solid #2a2a2a;
+    }
+    header h1 { font-size: 2rem; font-weight: 300; letter-spacing: 0.1em; color: #fff; }
+    header p  { margin-top: 0.4rem; color: #888; font-size: 0.9rem; }
+
+    /* ── Nav ── */
+    nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      justify-content: center;
+      padding: 1.2rem 2rem;
+      background: #161616;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      border-bottom: 1px solid #222;
+    }
+    nav a {
+      color: #aaa;
+      text-decoration: none;
+      font-size: 0.85rem;
+      padding: 0.35rem 0.9rem;
+      border: 1px solid #333;
+      border-radius: 999px;
+      transition: all 0.2s;
+    }
+    nav a:hover { color: #fff; border-color: #666; background: #222; }
+
+    /* ── Section ── */
+    .album {
+      padding: 2.5rem 2rem;
+      border-bottom: 1px solid #1e1e1e;
+    }
+    .album-header {
+      display: flex;
+      align-items: baseline;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .album-header h2 { font-size: 1.3rem; font-weight: 400; color: #ddd; }
+    .album-header .count { color: #555; font-size: 0.85rem; }
+    .breadcrumb {
+      font-size: 0.78rem;
+      color: #555;
+      margin-bottom: 0.4rem;
+      font-family: monospace;
+    }
+
+    /* ── Grid ── */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 6px;
+    }
+    .grid a {
+      display: block;
+      aspect-ratio: 1;
+      overflow: hidden;
+      background: #1a1a1a;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .grid a img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.25s, opacity 0.25s;
+      opacity: 0.85;
+    }
+    .grid a:hover img { transform: scale(1.06); opacity: 1; }
+
+    /* ── Lightbox ── */
+    #lightbox {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.93);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+    }
+    #lightbox.active { display: flex; }
+
+    #lb-img {
+      max-width: 92vw;
+      max-height: 85vh;
+      object-fit: contain;
+      border-radius: 4px;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.8);
+    }
+    #lb-caption {
+      margin-top: 0.8rem;
+      font-size: 0.8rem;
+      color: #777;
+      font-family: monospace;
+      max-width: 92vw;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    #lb-close {
+      position: fixed;
+      top: 1rem; right: 1.2rem;
+      font-size: 2rem;
+      color: #aaa;
+      cursor: pointer;
+      line-height: 1;
+      background: none;
+      border: none;
+      transition: color 0.15s;
+    }
+    #lb-close:hover { color: #fff; }
+
+    #lb-prev, #lb-next {
+      position: fixed;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 2rem;
+      color: #aaa;
+      cursor: pointer;
+      background: rgba(0,0,0,0.4);
+      border: none;
+      padding: 0.6rem 1rem;
+      border-radius: 4px;
+      transition: color 0.15s, background 0.15s;
+      line-height: 1;
+      user-select: none;
+    }
+    #lb-prev { left: 0.8rem; }
+    #lb-next { right: 0.8rem; }
+    #lb-prev:hover, #lb-next:hover { color: #fff; background: rgba(255,255,255,0.12); }
+
+    /* ── Responsive ── */
+    @media (max-width: 500px) {
+      .grid { grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 4px; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Visuals Art</h1>
+  <p>Photo Gallery</p>
+</header>
+
+<nav>
+  <a href="#misc">Misc (12)</a>
+  <a href="#bigblock">BigBlock (220)</a>
+  <a href="#christmas-wish">Christmas Wish (12)</a>
+</nav>
+
+<!-- ═══════════════════════════════════════════════ MISC ═══ -->
+<section class="album" id="misc">
+  <div class="breadcrumb">Pictures/</div>
+  <div class="album-header">
+    <h2>Misc</h2>
+    <span class="count">12 photos</span>
+  </div>
+  <div class="grid">
+    <a onclick="openLb(event,'Pictures/481174621_122197613642245581_1407553163104551092_n.jpg')"><img src="Pictures/481174621_122197613642245581_1407553163104551092_n.jpg" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/487488927_2454636421556864_6561987941580528809_n.jpg')"><img src="Pictures/487488927_2454636421556864_6561987941580528809_n.jpg" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/558864277_1314748187329542_3012165359319874925_n.jpg')"><img src="Pictures/558864277_1314748187329542_3012165359319874925_n.jpg" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/580509140_122215223522273173_1137197307595895105_n.jpg')"><img src="Pictures/580509140_122215223522273173_1137197307595895105_n.jpg" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/581548748_1337136158423858_2920135623593530562_n.jpg')"><img src="Pictures/581548748_1337136158423858_2920135623593530562_n.jpg" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/914e9c7d-77d8-4504-b408-aa84dbe39a73.png')"><img src="Pictures/914e9c7d-77d8-4504-b408-aa84dbe39a73.png" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/97fa00c4-1ea6-47d7-a6ad-efabfc5eab7c.jfif')"><img src="Pictures/97fa00c4-1ea6-47d7-a6ad-efabfc5eab7c.jfif" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/bf825d12-a889-4dd9-b971-88d9aa2f175c.webp')"><img src="Pictures/bf825d12-a889-4dd9-b971-88d9aa2f175c.webp" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/e86c8f15-f468-43f0-a71f-e1167cc9b2cb.webp')"><img src="Pictures/e86c8f15-f468-43f0-a71f-e1167cc9b2cb.webp" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/f2469bda-f83d-4e61-ab7b-bb667e08d47a.png')"><img src="Pictures/f2469bda-f83d-4e61-ab7b-bb667e08d47a.png" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/f3ea8ac0-3806-4322-924f-e09113d04cee%20(1).webp')"><img src="Pictures/f3ea8ac0-3806-4322-924f-e09113d04cee%20(1).webp" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/proxy-image.jfif')"><img src="Pictures/proxy-image.jfif" loading="lazy" alt=""></a>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════ BIGBLOCK ═══ -->
+<section class="album" id="bigblock">
+  <div class="breadcrumb">Pictures/BigBlock/</div>
+  <div class="album-header">
+    <h2>BigBlock</h2>
+    <span class="count">220 photos</span>
+  </div>
+  <div class="grid">
+    <a onclick="openLb(event,'Pictures/BigBlock/0d35bebb-8e64-4235-ac8f-4d32d6b14d85.webp')"><img src="Pictures/BigBlock/0d35bebb-8e64-4235-ac8f-4d32d6b14d85.webp" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/f3ea8ac0-3806-4322-924f-e09113d04ce.png')"><img src="Pictures/BigBlock/f3ea8ac0-3806-4322-924f-e09113d04ce.png" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/GLBC4610.PNG')"><img src="Pictures/BigBlock/GLBC4610.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0145.PNG')"><img src="Pictures/BigBlock/IMG_0145.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0192.PNG')"><img src="Pictures/BigBlock/IMG_0192.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0195.PNG')"><img src="Pictures/BigBlock/IMG_0195.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0205.PNG')"><img src="Pictures/BigBlock/IMG_0205.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0446.PNG')"><img src="Pictures/BigBlock/IMG_0446.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0467.PNG')"><img src="Pictures/BigBlock/IMG_0467.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0494.JPG')"><img src="Pictures/BigBlock/IMG_0494.JPG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0559.JPG')"><img src="Pictures/BigBlock/IMG_0559.JPG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0581.JPG')"><img src="Pictures/BigBlock/IMG_0581.JPG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0590.PNG')"><img src="Pictures/BigBlock/IMG_0590.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0599.PNG')"><img src="Pictures/BigBlock/IMG_0599.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0600.PNG')"><img src="Pictures/BigBlock/IMG_0600.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0601.PNG')"><img src="Pictures/BigBlock/IMG_0601.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0602.JPG')"><img src="Pictures/BigBlock/IMG_0602.JPG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0603.JPG')"><img src="Pictures/BigBlock/IMG_0603.JPG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0604.JPG')"><img src="Pictures/BigBlock/IMG_0604.JPG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0605.JPG')"><img src="Pictures/BigBlock/IMG_0605.JPG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0606.PNG')"><img src="Pictures/BigBlock/IMG_0606.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0607.JPG')"><img src="Pictures/BigBlock/IMG_0607.JPG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0608.JPG')"><img src="Pictures/BigBlock/IMG_0608.JPG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0609.JPG')"><img src="Pictures/BigBlock/IMG_0609.JPG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0610.PNG')"><img src="Pictures/BigBlock/IMG_0610.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0611.JPG')"><img src="Pictures/BigBlock/IMG_0611.JPG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0612.JPG')"><img src="Pictures/BigBlock/IMG_0612.JPG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0613.JPG')"><img src="Pictures/BigBlock/IMG_0613.JPG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0614.PNG')"><img src="Pictures/BigBlock/IMG_0614.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0615.JPG')"><img src="Pictures/BigBlock/IMG_0615.JPG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0617.JPG')"><img src="Pictures/BigBlock/IMG_0617.JPG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0618.PNG')"><img src="Pictures/BigBlock/IMG_0618.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0619.PNG')"><img src="Pictures/BigBlock/IMG_0619.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0620.PNG')"><img src="Pictures/BigBlock/IMG_0620.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0621.PNG')"><img src="Pictures/BigBlock/IMG_0621.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0622.JPG')"><img src="Pictures/BigBlock/IMG_0622.JPG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0623.PNG')"><img src="Pictures/BigBlock/IMG_0623.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0624.JPG')"><img src="Pictures/BigBlock/IMG_0624.JPG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0625.PNG')"><img src="Pictures/BigBlock/IMG_0625.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0627.JPG')"><img src="Pictures/BigBlock/IMG_0627.JPG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0628.JPG')"><img src="Pictures/BigBlock/IMG_0628.JPG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0629.PNG')"><img src="Pictures/BigBlock/IMG_0629.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0630.PNG')"><img src="Pictures/BigBlock/IMG_0630.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0631.PNG')"><img src="Pictures/BigBlock/IMG_0631.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0632.PNG')"><img src="Pictures/BigBlock/IMG_0632.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0633.JPG')"><img src="Pictures/BigBlock/IMG_0633.JPG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0634.PNG')"><img src="Pictures/BigBlock/IMG_0634.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0635.JPG')"><img src="Pictures/BigBlock/IMG_0635.JPG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0636.PNG')"><img src="Pictures/BigBlock/IMG_0636.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0637.JPG')"><img src="Pictures/BigBlock/IMG_0637.JPG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0640.JPG')"><img src="Pictures/BigBlock/IMG_0640.JPG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0642.PNG')"><img src="Pictures/BigBlock/IMG_0642.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0643.JPG')"><img src="Pictures/BigBlock/IMG_0643.JPG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0644.JPG')"><img src="Pictures/BigBlock/IMG_0644.JPG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0645.JPG')"><img src="Pictures/BigBlock/IMG_0645.JPG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0649.PNG')"><img src="Pictures/BigBlock/IMG_0649.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0650.PNG')"><img src="Pictures/BigBlock/IMG_0650.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0651.JPG')"><img src="Pictures/BigBlock/IMG_0651.JPG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0652.JPG')"><img src="Pictures/BigBlock/IMG_0652.JPG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0653.PNG')"><img src="Pictures/BigBlock/IMG_0653.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0654.PNG')"><img src="Pictures/BigBlock/IMG_0654.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0655.JPG')"><img src="Pictures/BigBlock/IMG_0655.JPG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0656.PNG')"><img src="Pictures/BigBlock/IMG_0656.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0668.JPG')"><img src="Pictures/BigBlock/IMG_0668.JPG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0669.JPG')"><img src="Pictures/BigBlock/IMG_0669.JPG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0670.PNG')"><img src="Pictures/BigBlock/IMG_0670.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0671.JPG')"><img src="Pictures/BigBlock/IMG_0671.JPG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0672.JPG')"><img src="Pictures/BigBlock/IMG_0672.JPG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0673.PNG')"><img src="Pictures/BigBlock/IMG_0673.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0674.PNG')"><img src="Pictures/BigBlock/IMG_0674.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0675.JPG')"><img src="Pictures/BigBlock/IMG_0675.JPG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0676.JPG')"><img src="Pictures/BigBlock/IMG_0676.JPG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0677.PNG')"><img src="Pictures/BigBlock/IMG_0677.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0678.JPG')"><img src="Pictures/BigBlock/IMG_0678.JPG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0679.JPG')"><img src="Pictures/BigBlock/IMG_0679.JPG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0680.JPG')"><img src="Pictures/BigBlock/IMG_0680.JPG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0681.PNG')"><img src="Pictures/BigBlock/IMG_0681.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0682.JPG')"><img src="Pictures/BigBlock/IMG_0682.JPG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0683.JPG')"><img src="Pictures/BigBlock/IMG_0683.JPG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0684.JPG')"><img src="Pictures/BigBlock/IMG_0684.JPG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0685.JPG')"><img src="Pictures/BigBlock/IMG_0685.JPG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0686.PNG')"><img src="Pictures/BigBlock/IMG_0686.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0687.PNG')"><img src="Pictures/BigBlock/IMG_0687.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0688.JPG')"><img src="Pictures/BigBlock/IMG_0688.JPG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0689.JPG')"><img src="Pictures/BigBlock/IMG_0689.JPG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0690.PNG')"><img src="Pictures/BigBlock/IMG_0690.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0691.PNG')"><img src="Pictures/BigBlock/IMG_0691.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0692.JPG')"><img src="Pictures/BigBlock/IMG_0692.JPG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0693.JPG')"><img src="Pictures/BigBlock/IMG_0693.JPG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0694.JPG')"><img src="Pictures/BigBlock/IMG_0694.JPG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0695.PNG')"><img src="Pictures/BigBlock/IMG_0695.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0696.PNG')"><img src="Pictures/BigBlock/IMG_0696.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0697.JPG')"><img src="Pictures/BigBlock/IMG_0697.JPG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0698.JPG')"><img src="Pictures/BigBlock/IMG_0698.JPG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0699.JPG')"><img src="Pictures/BigBlock/IMG_0699.JPG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0700.PNG')"><img src="Pictures/BigBlock/IMG_0700.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0701.JPG')"><img src="Pictures/BigBlock/IMG_0701.JPG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0705.JPG')"><img src="Pictures/BigBlock/IMG_0705.JPG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0706.JPG')"><img src="Pictures/BigBlock/IMG_0706.JPG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0707.JPG')"><img src="Pictures/BigBlock/IMG_0707.JPG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0708.JPG')"><img src="Pictures/BigBlock/IMG_0708.JPG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0709.JPG')"><img src="Pictures/BigBlock/IMG_0709.JPG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0710.JPG')"><img src="Pictures/BigBlock/IMG_0710.JPG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0711.JPG')"><img src="Pictures/BigBlock/IMG_0711.JPG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0712.JPG')"><img src="Pictures/BigBlock/IMG_0712.JPG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0713.JPG')"><img src="Pictures/BigBlock/IMG_0713.JPG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0714.JPG')"><img src="Pictures/BigBlock/IMG_0714.JPG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0715.JPG')"><img src="Pictures/BigBlock/IMG_0715.JPG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0716.JPG')"><img src="Pictures/BigBlock/IMG_0716.JPG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0717.JPG')"><img src="Pictures/BigBlock/IMG_0717.JPG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0718.JPG')"><img src="Pictures/BigBlock/IMG_0718.JPG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0719.JPG')"><img src="Pictures/BigBlock/IMG_0719.JPG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0720.JPG')"><img src="Pictures/BigBlock/IMG_0720.JPG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0721.PNG')"><img src="Pictures/BigBlock/IMG_0721.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0723.PNG')"><img src="Pictures/BigBlock/IMG_0723.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0724.JPG')"><img src="Pictures/BigBlock/IMG_0724.JPG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0725.JPG')"><img src="Pictures/BigBlock/IMG_0725.JPG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0726.JPG')"><img src="Pictures/BigBlock/IMG_0726.JPG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0727.JPG')"><img src="Pictures/BigBlock/IMG_0727.JPG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0728.JPG')"><img src="Pictures/BigBlock/IMG_0728.JPG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0729.JPG')"><img src="Pictures/BigBlock/IMG_0729.JPG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0730.JPG')"><img src="Pictures/BigBlock/IMG_0730.JPG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0731.JPG')"><img src="Pictures/BigBlock/IMG_0731.JPG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0732.JPG')"><img src="Pictures/BigBlock/IMG_0732.JPG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0733.JPG')"><img src="Pictures/BigBlock/IMG_0733.JPG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0734.JPG')"><img src="Pictures/BigBlock/IMG_0734.JPG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0735.PNG')"><img src="Pictures/BigBlock/IMG_0735.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0736.JPG')"><img src="Pictures/BigBlock/IMG_0736.JPG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0737.JPG')"><img src="Pictures/BigBlock/IMG_0737.JPG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0738.JPG')"><img src="Pictures/BigBlock/IMG_0738.JPG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0739.JPG')"><img src="Pictures/BigBlock/IMG_0739.JPG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0740.JPG')"><img src="Pictures/BigBlock/IMG_0740.JPG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0741.JPG')"><img src="Pictures/BigBlock/IMG_0741.JPG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0742.JPG')"><img src="Pictures/BigBlock/IMG_0742.JPG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0743.PNG')"><img src="Pictures/BigBlock/IMG_0743.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0744.JPG')"><img src="Pictures/BigBlock/IMG_0744.JPG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0745.JPG')"><img src="Pictures/BigBlock/IMG_0745.JPG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0746.PNG')"><img src="Pictures/BigBlock/IMG_0746.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0747.PNG')"><img src="Pictures/BigBlock/IMG_0747.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0748.PNG')"><img src="Pictures/BigBlock/IMG_0748.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0749.PNG')"><img src="Pictures/BigBlock/IMG_0749.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0750.PNG')"><img src="Pictures/BigBlock/IMG_0750.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0751.JPG')"><img src="Pictures/BigBlock/IMG_0751.JPG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0752.JPG')"><img src="Pictures/BigBlock/IMG_0752.JPG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0753.JPG')"><img src="Pictures/BigBlock/IMG_0753.JPG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0754.PNG')"><img src="Pictures/BigBlock/IMG_0754.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0755.PNG')"><img src="Pictures/BigBlock/IMG_0755.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0756.JPG')"><img src="Pictures/BigBlock/IMG_0756.JPG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0757.JPG')"><img src="Pictures/BigBlock/IMG_0757.JPG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0758.JPG')"><img src="Pictures/BigBlock/IMG_0758.JPG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0759.JPG')"><img src="Pictures/BigBlock/IMG_0759.JPG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0760.JPG')"><img src="Pictures/BigBlock/IMG_0760.JPG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0761.JPG')"><img src="Pictures/BigBlock/IMG_0761.JPG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0762.JPG')"><img src="Pictures/BigBlock/IMG_0762.JPG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0763.PNG')"><img src="Pictures/BigBlock/IMG_0763.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0764.JPG')"><img src="Pictures/BigBlock/IMG_0764.JPG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0765.PNG')"><img src="Pictures/BigBlock/IMG_0765.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0766.PNG')"><img src="Pictures/BigBlock/IMG_0766.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0767.JPG')"><img src="Pictures/BigBlock/IMG_0767.JPG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0768.JPG')"><img src="Pictures/BigBlock/IMG_0768.JPG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0769.JPG')"><img src="Pictures/BigBlock/IMG_0769.JPG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0770.PNG')"><img src="Pictures/BigBlock/IMG_0770.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0771.PNG')"><img src="Pictures/BigBlock/IMG_0771.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0772.PNG')"><img src="Pictures/BigBlock/IMG_0772.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0775.PNG')"><img src="Pictures/BigBlock/IMG_0775.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0776.PNG')"><img src="Pictures/BigBlock/IMG_0776.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0777.JPG')"><img src="Pictures/BigBlock/IMG_0777.JPG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0778.JPG')"><img src="Pictures/BigBlock/IMG_0778.JPG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0779.JPG')"><img src="Pictures/BigBlock/IMG_0779.JPG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0793.PNG')"><img src="Pictures/BigBlock/IMG_0793.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0794.PNG')"><img src="Pictures/BigBlock/IMG_0794.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0795.PNG')"><img src="Pictures/BigBlock/IMG_0795.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0796.PNG')"><img src="Pictures/BigBlock/IMG_0796.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0797.PNG')"><img src="Pictures/BigBlock/IMG_0797.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0798.PNG')"><img src="Pictures/BigBlock/IMG_0798.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0799.PNG')"><img src="Pictures/BigBlock/IMG_0799.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0800.PNG')"><img src="Pictures/BigBlock/IMG_0800.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0801.PNG')"><img src="Pictures/BigBlock/IMG_0801.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0802.PNG')"><img src="Pictures/BigBlock/IMG_0802.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0803.PNG')"><img src="Pictures/BigBlock/IMG_0803.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0804.PNG')"><img src="Pictures/BigBlock/IMG_0804.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0805.PNG')"><img src="Pictures/BigBlock/IMG_0805.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0806.PNG')"><img src="Pictures/BigBlock/IMG_0806.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0807.PNG')"><img src="Pictures/BigBlock/IMG_0807.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0808.PNG')"><img src="Pictures/BigBlock/IMG_0808.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0809.PNG')"><img src="Pictures/BigBlock/IMG_0809.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0810.PNG')"><img src="Pictures/BigBlock/IMG_0810.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0811.PNG')"><img src="Pictures/BigBlock/IMG_0811.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0812.PNG')"><img src="Pictures/BigBlock/IMG_0812.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0813.PNG')"><img src="Pictures/BigBlock/IMG_0813.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0814.PNG')"><img src="Pictures/BigBlock/IMG_0814.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0815.PNG')"><img src="Pictures/BigBlock/IMG_0815.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0816.PNG')"><img src="Pictures/BigBlock/IMG_0816.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0817.PNG')"><img src="Pictures/BigBlock/IMG_0817.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0818.PNG')"><img src="Pictures/BigBlock/IMG_0818.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0819.PNG')"><img src="Pictures/BigBlock/IMG_0819.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0820.PNG')"><img src="Pictures/BigBlock/IMG_0820.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0822.JPG')"><img src="Pictures/BigBlock/IMG_0822.JPG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0823.JPG')"><img src="Pictures/BigBlock/IMG_0823.JPG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0824.PNG')"><img src="Pictures/BigBlock/IMG_0824.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0825.PNG')"><img src="Pictures/BigBlock/IMG_0825.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0826.PNG')"><img src="Pictures/BigBlock/IMG_0826.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0827.JPG')"><img src="Pictures/BigBlock/IMG_0827.JPG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0828.PNG')"><img src="Pictures/BigBlock/IMG_0828.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0829.PNG')"><img src="Pictures/BigBlock/IMG_0829.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0830.PNG')"><img src="Pictures/BigBlock/IMG_0830.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0831.JPG')"><img src="Pictures/BigBlock/IMG_0831.JPG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0832.PNG')"><img src="Pictures/BigBlock/IMG_0832.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0833.JPG')"><img src="Pictures/BigBlock/IMG_0833.JPG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0834.JPG')"><img src="Pictures/BigBlock/IMG_0834.JPG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0835.PNG')"><img src="Pictures/BigBlock/IMG_0835.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0836.PNG')"><img src="Pictures/BigBlock/IMG_0836.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0837.JPG')"><img src="Pictures/BigBlock/IMG_0837.JPG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0838.JPG')"><img src="Pictures/BigBlock/IMG_0838.JPG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0839.PNG')"><img src="Pictures/BigBlock/IMG_0839.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0840.PNG')"><img src="Pictures/BigBlock/IMG_0840.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0841.PNG')"><img src="Pictures/BigBlock/IMG_0841.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0842.PNG')"><img src="Pictures/BigBlock/IMG_0842.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0846.PNG')"><img src="Pictures/BigBlock/IMG_0846.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0847.JPG')"><img src="Pictures/BigBlock/IMG_0847.JPG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0848.JPG')"><img src="Pictures/BigBlock/IMG_0848.JPG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0849.JPG')"><img src="Pictures/BigBlock/IMG_0849.JPG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0850.PNG')"><img src="Pictures/BigBlock/IMG_0850.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0851.JPG')"><img src="Pictures/BigBlock/IMG_0851.JPG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0852.JPG')"><img src="Pictures/BigBlock/IMG_0852.JPG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0853.JPG')"><img src="Pictures/BigBlock/IMG_0853.JPG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0854.PNG')"><img src="Pictures/BigBlock/IMG_0854.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0855.PNG')"><img src="Pictures/BigBlock/IMG_0855.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0856.PNG')"><img src="Pictures/BigBlock/IMG_0856.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0857.PNG')"><img src="Pictures/BigBlock/IMG_0857.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0858.JPG')"><img src="Pictures/BigBlock/IMG_0858.JPG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0859.JPG')"><img src="Pictures/BigBlock/IMG_0859.JPG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0860.JPG')"><img src="Pictures/BigBlock/IMG_0860.JPG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0861.JPG')"><img src="Pictures/BigBlock/IMG_0861.JPG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_0862.JPG')"><img src="Pictures/BigBlock/IMG_0862.JPG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_1334.PNG')"><img src="Pictures/BigBlock/IMG_1334.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_1335.PNG')"><img src="Pictures/BigBlock/IMG_1335.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_1336.PNG')"><img src="Pictures/BigBlock/IMG_1336.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_1337.PNG')"><img src="Pictures/BigBlock/IMG_1337.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_1338.PNG')"><img src="Pictures/BigBlock/IMG_1338.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_1339.PNG')"><img src="Pictures/BigBlock/IMG_1339.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_1340.PNG')"><img src="Pictures/BigBlock/IMG_1340.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_1341.PNG')"><img src="Pictures/BigBlock/IMG_1341.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_1342.PNG')"><img src="Pictures/BigBlock/IMG_1342.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_1346.PNG')"><img src="Pictures/BigBlock/IMG_1346.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_1347.PNG')"><img src="Pictures/BigBlock/IMG_1347.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_1348.PNG')"><img src="Pictures/BigBlock/IMG_1348.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_1349.PNG')"><img src="Pictures/BigBlock/IMG_1349.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_1350.PNG')"><img src="Pictures/BigBlock/IMG_1350.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_1351.PNG')"><img src="Pictures/BigBlock/IMG_1351.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_1352.PNG')"><img src="Pictures/BigBlock/IMG_1352.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_1353.PNG')"><img src="Pictures/BigBlock/IMG_1353.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_1354.PNG')"><img src="Pictures/BigBlock/IMG_1354.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_1355.PNG')"><img src="Pictures/BigBlock/IMG_1355.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_1356.PNG')"><img src="Pictures/BigBlock/IMG_1356.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_1357.PNG')"><img src="Pictures/BigBlock/IMG_1357.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_1360.PNG')"><img src="Pictures/BigBlock/IMG_1360.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_1361.PNG')"><img src="Pictures/BigBlock/IMG_1361.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_1362.PNG')"><img src="Pictures/BigBlock/IMG_1362.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_1363.PNG')"><img src="Pictures/BigBlock/IMG_1363.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_1374.PNG')"><img src="Pictures/BigBlock/IMG_1374.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_1375.PNG')"><img src="Pictures/BigBlock/IMG_1375.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_1376.PNG')"><img src="Pictures/BigBlock/IMG_1376.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_1377.PNG')"><img src="Pictures/BigBlock/IMG_1377.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_1378.PNG')"><img src="Pictures/BigBlock/IMG_1378.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_1379.PNG')"><img src="Pictures/BigBlock/IMG_1379.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_1380.PNG')"><img src="Pictures/BigBlock/IMG_1380.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_1381.PNG')"><img src="Pictures/BigBlock/IMG_1381.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_1382.PNG')"><img src="Pictures/BigBlock/IMG_1382.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_1383.PNG')"><img src="Pictures/BigBlock/IMG_1383.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_1384.PNG')"><img src="Pictures/BigBlock/IMG_1384.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_1385.PNG')"><img src="Pictures/BigBlock/IMG_1385.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_1386.PNG')"><img src="Pictures/BigBlock/IMG_1386.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_1387.PNG')"><img src="Pictures/BigBlock/IMG_1387.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_1388.PNG')"><img src="Pictures/BigBlock/IMG_1388.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_1389.PNG')"><img src="Pictures/BigBlock/IMG_1389.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_1390.PNG')"><img src="Pictures/BigBlock/IMG_1390.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_1391.PNG')"><img src="Pictures/BigBlock/IMG_1391.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_1392.PNG')"><img src="Pictures/BigBlock/IMG_1392.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_1393.PNG')"><img src="Pictures/BigBlock/IMG_1393.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_1394.PNG')"><img src="Pictures/BigBlock/IMG_1394.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_1395.PNG')"><img src="Pictures/BigBlock/IMG_1395.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_1396.PNG')"><img src="Pictures/BigBlock/IMG_1396.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_1397.PNG')"><img src="Pictures/BigBlock/IMG_1397.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_1398.PNG')"><img src="Pictures/BigBlock/IMG_1398.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_1399.PNG')"><img src="Pictures/BigBlock/IMG_1399.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_1400.PNG')"><img src="Pictures/BigBlock/IMG_1400.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_1401.PNG')"><img src="Pictures/BigBlock/IMG_1401.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_1402.PNG')"><img src="Pictures/BigBlock/IMG_1402.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_1403.PNG')"><img src="Pictures/BigBlock/IMG_1403.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_1404.PNG')"><img src="Pictures/BigBlock/IMG_1404.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_1405.PNG')"><img src="Pictures/BigBlock/IMG_1405.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_1406.PNG')"><img src="Pictures/BigBlock/IMG_1406.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_1724.PNG')"><img src="Pictures/BigBlock/IMG_1724.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_1725.PNG')"><img src="Pictures/BigBlock/IMG_1725.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_1726.PNG')"><img src="Pictures/BigBlock/IMG_1726.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_1727.PNG')"><img src="Pictures/BigBlock/IMG_1727.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_1728.PNG')"><img src="Pictures/BigBlock/IMG_1728.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_1729.PNG')"><img src="Pictures/BigBlock/IMG_1729.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_1731.PNG')"><img src="Pictures/BigBlock/IMG_1731.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_1732.PNG')"><img src="Pictures/BigBlock/IMG_1732.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_1733.PNG')"><img src="Pictures/BigBlock/IMG_1733.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_1734.PNG')"><img src="Pictures/BigBlock/IMG_1734.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_1735.PNG')"><img src="Pictures/BigBlock/IMG_1735.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_1736.PNG')"><img src="Pictures/BigBlock/IMG_1736.PNG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/BigBlock/IMG_1740.PNG')"><img src="Pictures/BigBlock/IMG_1740.PNG" loading="lazy" alt=""></a>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════ COMICS / CHRISTMAS WISH ═══ -->
+<section class="album" id="christmas-wish">
+  <div class="breadcrumb">Pictures/Comics/New folder/Christmas_wish/</div>
+  <div class="album-header">
+    <h2>Christmas Wish</h2>
+    <span class="count">12 photos</span>
+  </div>
+  <div class="grid">
+    <a onclick="openLb(event,'Pictures/Comics/New%20folder/Christmas_wish/IMG_0477.JPG')"><img src="Pictures/Comics/New%20folder/Christmas_wish/IMG_0477.JPG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/Comics/New%20folder/Christmas_wish/IMG_0478.JPG')"><img src="Pictures/Comics/New%20folder/Christmas_wish/IMG_0478.JPG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/Comics/New%20folder/Christmas_wish/IMG_0479.JPG')"><img src="Pictures/Comics/New%20folder/Christmas_wish/IMG_0479.JPG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/Comics/New%20folder/Christmas_wish/IMG_0480.JPG')"><img src="Pictures/Comics/New%20folder/Christmas_wish/IMG_0480.JPG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/Comics/New%20folder/Christmas_wish/IMG_0481.JPG')"><img src="Pictures/Comics/New%20folder/Christmas_wish/IMG_0481.JPG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/Comics/New%20folder/Christmas_wish/IMG_0482.JPG')"><img src="Pictures/Comics/New%20folder/Christmas_wish/IMG_0482.JPG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/Comics/New%20folder/Christmas_wish/IMG_0483.JPG')"><img src="Pictures/Comics/New%20folder/Christmas_wish/IMG_0483.JPG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/Comics/New%20folder/Christmas_wish/IMG_0484.JPG')"><img src="Pictures/Comics/New%20folder/Christmas_wish/IMG_0484.JPG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/Comics/New%20folder/Christmas_wish/IMG_0485.JPG')"><img src="Pictures/Comics/New%20folder/Christmas_wish/IMG_0485.JPG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/Comics/New%20folder/Christmas_wish/IMG_0486.JPG')"><img src="Pictures/Comics/New%20folder/Christmas_wish/IMG_0486.JPG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/Comics/New%20folder/Christmas_wish/IMG_0487.JPG')"><img src="Pictures/Comics/New%20folder/Christmas_wish/IMG_0487.JPG" loading="lazy" alt=""></a>
+    <a onclick="openLb(event,'Pictures/Comics/New%20folder/Christmas_wish/IMG_0488.JPG')"><img src="Pictures/Comics/New%20folder/Christmas_wish/IMG_0488.JPG" loading="lazy" alt=""></a>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════ LIGHTBOX ═══ -->
+<div id="lightbox">
+  <button id="lb-close" onclick="closeLb()" title="Close">&#x2715;</button>
+  <button id="lb-prev" onclick="stepLb(-1)" title="Previous">&#x2039;</button>
+  <img id="lb-img" src="" alt="">
+  <div id="lb-caption"></div>
+  <button id="lb-next" onclick="stepLb(1)" title="Next">&#x203a;</button>
+</div>
+
+<script>
+  // Build a flat list of all image paths per section for arrow-key navigation
+  let currentSection = [];
+  let currentIndex = 0;
+
+  function getSectionImages(clickedEl) {
+    const section = clickedEl.closest('.album');
+    return Array.from(section.querySelectorAll('a[onclick]')).map(a => {
+      const m = a.getAttribute('onclick').match(/'([^']+)'/);
+      return m ? m[1] : null;
+    }).filter(Boolean);
+  }
+
+  function openLb(e, path) {
+    e.preventDefault();
+    const anchor = e.currentTarget;
+    currentSection = getSectionImages(anchor);
+    currentIndex = currentSection.indexOf(path);
+    showImage(path);
+  }
+
+  function showImage(path) {
+    document.getElementById('lb-img').src = path;
+    document.getElementById('lb-caption').textContent = decodeURIComponent(path.split('/').pop());
+    document.getElementById('lightbox').classList.add('active');
+  }
+
+  function closeLb() {
+    document.getElementById('lightbox').classList.remove('active');
+    document.getElementById('lb-img').src = '';
+  }
+
+  function stepLb(dir) {
+    currentIndex = (currentIndex + dir + currentSection.length) % currentSection.length;
+    showImage(currentSection[currentIndex]);
+  }
+
+  // Keyboard navigation
+  document.addEventListener('keydown', e => {
+    const lb = document.getElementById('lightbox');
+    if (!lb.classList.contains('active')) return;
+    if (e.key === 'Escape') closeLb();
+    if (e.key === 'ArrowLeft')  stepLb(-1);
+    if (e.key === 'ArrowRight') stepLb(1);
+  });
+
+  // Click backdrop to close
+  document.getElementById('lightbox').addEventListener('click', e => {
+    if (e.target === document.getElementById('lightbox')) closeLb();
+  });
+</script>
+
+</body>
+</html>
